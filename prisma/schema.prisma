@@ -1,0 +1,47 @@
+// The app's tables: people, teams, and the documents they share.
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  schemas  = ["app"]
+}
+
+model User {
+  id   Int    @id
+  name String
+
+  @@map("users")
+  @@schema("app")
+}
+
+model Team {
+  id   Int    @id
+  name String
+
+  @@map("teams")
+  @@schema("app")
+}
+
+model TeamMember {
+  team_id Int
+  user_id Int
+
+  @@id([team_id, user_id])
+  @@index([user_id])
+  @@map("team_members")
+  @@schema("app")
+}
+
+model Document {
+  id       Int    @id @default(autoincrement())
+  owner_id Int
+  title    String
+  body     String @default("")
+
+  @@index([owner_id])
+  @@map("documents")
+  @@schema("app")
+}

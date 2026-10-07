@@ -1,0 +1,78 @@
+# On every push and pull request: the policy is laid out and has its migration, a fresh database migrates,
+# the policy's tests and the app's tests pass, and the page is clicked through in a browser. On a pull request,
+# rowstile also comments what a change to the policy does: who gains or loses access, what to look at twice.
+name: ci
+on:
+  push:
+    branches: [main]
+  pull_request:
+permissions:
+  contents: read
+
+env:
+  ROWSTILE_OWNER_DSN: postgresql://starter_owner:owner@localhost:5432/starter
+  ROWSTILE_APP_URL: postgresql://starter_app:app@localhost:5432/starter
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: postgres
+        ports: ["5432:5432"]
+        options: --health-cmd "pg_isready -U postgres" --health-interval 2s --health-timeout 3s --health-retries 30
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "24"
+      - run: npm ci --no-audit --no-fund
+      # the owner's role and the database, as docker compose makes them
+      - run: psql "postgresql://postgres:postgres@localhost:5432/postgres" -v ON_ERROR_STOP=1 -f docker/init.sql
+      - run: npx rowstile fmt --check db/policy.authz db/tests/*.authz
+      - run: npx rowstile migrate --check      # a change to the policy has its migration
+      - run: npx prisma migrate deploy
+      - run: npx rowstile test
+      # the schema and the database agree
+      - run: npx prisma migrate diff --from-config-datasource --to-schema prisma/schema.prisma --exit-code
+      - run: npx prisma generate && npx tsc --noEmit
+      - run: npm test
+      # the page, in the runner's Chrome
+      - run: npx next build
+      - run: |
+          npx next start &
+          for _ in $(seq 30); do curl -sf http://localhost:3000/ >/dev/null && break; sleep 1; done
+          node tests/page.mjs http://localhost:3000/
+
+  # What a pull request's policy change does, as a comment kept up to date. The database it reads is at the
+  # base branch's state: its migrations, with the people the first one makes.
+  review:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: postgres
+        ports: ["5432:5432"]
+        options: --health-cmd "pg_isready -U postgres" --health-interval 2s --health-timeout 3s --health-retries 30
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "24"
+      - run: psql "postgresql://postgres:postgres@localhost:5432/postgres" -v ON_ERROR_STOP=1 -f docker/init.sql
+      - name: the base branch's migrations
+        run: |
+          git worktree add "$RUNNER_TEMP/base" "${{ github.event.pull_request.base.sha }}"
+          cd "$RUNNER_TEMP/base" && npm ci --no-audit --no-fund && npx prisma migrate deploy
+      - uses: rowstile/rowstile/review-ci/github@v0.1.0-alpha.6
+        with:
+          database-url: ${{ env.ROWSTILE_OWNER_DSN }}
