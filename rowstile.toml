@@ -1,0 +1,8 @@
+policy   = "db/policy.authz"
+tests    = ["db/tests/*.authz"]
+database = "env:ROWSTILE_OWNER_DSN"     # the tables' owner: the URL Prisma migrates with
+[clients]
+ts = "src/authz.gen.ts"                 # the policy's names, written by rowstile dev and rowstile client
+[migrations]
+tool = "prisma"
+dir  = "prisma/migrations"
