@@ -73,6 +73,6 @@ jobs:
         run: |
           git worktree add "$RUNNER_TEMP/base" "${{ github.event.pull_request.base.sha }}"
           cd "$RUNNER_TEMP/base" && npm ci --no-audit --no-fund && npx prisma migrate deploy
-      - uses: rowstile/rowstile/review-ci/github@v0.1.0-alpha.7
+      - uses: rowstile/rowstile/review-ci/github@v0.1.0-alpha.9
         with:
           database-url: ${{ env.ROWSTILE_OWNER_DSN }}
