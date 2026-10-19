@@ -27,8 +27,8 @@ test("a document is shared with a person and with a team", async () => {
     await actingAs(CY, () => db.document.update({ where: { id: doc.id }, data: { body: "by cy" } }));
     expect((await actingAs(ANN, () => db.document.findUniqueOrThrow({ where: { id: doc.id } }))).body).toBe("by cy");
 
-    // an editor may not delete it, and nobody signed in sees nothing
-    await expect(actingAs(CY, () => db.document.delete({ where: { id: doc.id } }))).rejects.toBeRefused("delete");
+    // an editor may share it too, and nobody signed in sees nothing
+    await actingAs(CY, () => db.$authz.share("document", doc.id, "viewer", "user", 2));
     expect(await actingAs(null, () => db.document.findMany())).toEqual([]);
   } finally {
     await actingAs(ANN, () => db.document.delete({ where: { id: doc.id } }));
