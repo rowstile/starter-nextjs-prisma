@@ -11,22 +11,22 @@
   "dependencies": {
     "@prisma/adapter-pg": "7.10.0",
     "@prisma/client": "7.10.0",
-    "@rowstile/client": "0.1.0-alpha.7",
-    "@rowstile/next": "0.1.0-alpha.7",
-    "@rowstile/prisma": "0.1.0-alpha.7",
+    "@rowstile/client": "0.1.0-alpha.9",
+    "@rowstile/next": "0.1.0-alpha.9",
+    "@rowstile/prisma": "0.1.0-alpha.9",
     "next": "^16.3.6",
     "pg": "^8.23.0",
     "react": "^19.3.0",
     "react-dom": "^19.3.0"
   },
   "devDependencies": {
-    "@rowstile/vitest": "0.1.0-alpha.7",
+    "@rowstile/vitest": "0.1.0-alpha.9",
     "@types/node": "^24",
     "@types/pg": "^8.23.1",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "prisma": "7.10.0",
-    "rowstile": "0.1.0-alpha.7",
+    "rowstile": "0.1.0-alpha.9",
     "typescript": "^5.9.0",
     "vitest": "^4.1.11"
   }
