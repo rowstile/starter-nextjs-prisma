@@ -1,4 +1,4 @@
-# Every Monday: the starter against the newest rowstile release (npm's `next` while only alphas are out), so
+# Every Monday: the starter against the newest rowstile release (npm's `next` while only pre-releases are out), so
 # a release that breaks it is seen here first. It doesn't change the repository: a red run is the signal to look.
 name: weekly
 on:
