@@ -95,11 +95,7 @@ try {
   await js(`(() => { const li = ${item("Roadmap")}; const i = li.querySelector('input[name=title]'); i.value = 'Roadmap 2'; i.form.requestSubmit(); })()`);
   check("... and renames it", await until(`!!${item("Roadmap 2")} && !document.querySelector('pre[role=alert]')`, "the new title"), await text());
   await js(`(() => { const li = ${item("Roadmap 2")}; [...li.querySelectorAll('button')].find((b) => b.innerText === 'Delete').form.requestSubmit(); })()`);
-  check("cy's delete is refused", await until("document.querySelector('pre[role=alert]')?.innerText.includes('permission denied')", "the refusal"), await text());
-
-  await signIn("1", "ann");
-  await js(`(() => { const li = ${item("Roadmap 2")}; [...li.querySelectorAll('button')].find((b) => b.innerText === 'Delete').form.requestSubmit(); })()`);
-  check("ann deletes it", await until(`!${item("Roadmap 2")}`, "the document gone"), await text());
+  check("cy, an editor, deletes it: who may share may delete", await until(`!${item("Roadmap 2")}`, "the document gone"), await text());
 } finally {
   ws.close();
   chrome.kill();
