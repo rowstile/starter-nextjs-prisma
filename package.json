@@ -11,23 +11,23 @@
   "dependencies": {
     "@prisma/adapter-pg": "7.10.0",
     "@prisma/client": "7.10.0",
-    "@rowstile/client": "0.1.0-beta.3",
-    "@rowstile/next": "0.1.0-beta.3",
-    "@rowstile/prisma": "0.1.0-beta.3",
+    "@rowstile/client": "0.1.0-beta.4",
+    "@rowstile/next": "0.1.0-beta.4",
+    "@rowstile/prisma": "0.1.0-beta.4",
     "next": "^16.3.6",
     "pg": "^8.23.0",
     "react": "^19.3.0",
     "react-dom": "^19.3.0"
   },
   "devDependencies": {
-    "@rowstile/vitest": "0.1.0-beta.3",
+    "@rowstile/vitest": "0.1.0-beta.4",
     "@types/node": "^24",
     "@types/pg": "^8.23.1",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "dotenv": "^18.0.9",
     "prisma": "7.10.0",
-    "rowstile": "0.1.0-beta.3",
+    "rowstile": "0.1.0-beta.4",
     "typescript": "^5.9.0",
     "vitest": "^4.1.11"
   }
